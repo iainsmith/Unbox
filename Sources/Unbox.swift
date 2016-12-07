@@ -90,6 +90,16 @@ public func unbox<T: UnboxableWithContext>(dictionary: UnboxableDictionary, cont
     return try Unboxer(dictionary: dictionary).performUnboxing(context: context)
 }
 
+/// Unbox a JSON dictionary into a model `T` using a required contextual object at a key. Throws `UnboxError`.
+public func unbox<T: UnboxableWithContext>(dictionary: UnboxableDictionary, atKey key: String, context: T.UnboxContext) throws -> T {
+    return try Unboxer(dictionary: dictionary).unbox(key: key, context: context)
+}
+
+/// Unbox a JSON dictionary into a model `T` using a required contextual object at a key. Throws `UnboxError`.
+public func unbox<T: UnboxableWithContext>(dictionary: UnboxableDictionary, atKeyPath keyPath: String, context: T.UnboxContext) throws -> T {
+    return try Unboxer(dictionary: dictionary).unbox(keyPath: keyPath, context: context)
+}
+
 /// Unbox an array of JSON dictionaries into an array of `T` using a required contextual object, optionally allowing invalid elements. Throws `UnboxError`.
 public func unbox<T: UnboxableWithContext>(dictionaries: [UnboxableDictionary], context: T.UnboxContext, allowInvalidElements: Bool = false) throws -> [T] {
     return try dictionaries.map(allowInvalidElements: allowInvalidElements, transform: {

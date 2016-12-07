@@ -1639,6 +1639,68 @@ class UnboxTests: XCTestCase {
             XCTFail("\(error)")
         }
     }
+
+
+    func testUnboxingObjectWithContextAtCustomKey() {
+        let dictionary = [
+            "at_key": [
+                "nested" : [:],
+                "nestedArray": [[:]]
+            ]
+        ]
+
+        do {
+            let model: UnboxTestContextMock = try unbox(dictionary: dictionary, atKey: "at_key", context: "this context")
+            XCTAssertEqual(model.context, "this context")
+
+            if let nestedModel = model.nested {
+                XCTAssertEqual(nestedModel.context, "nestedContext")
+            } else {
+                XCTFail("Failed to unbox nested model")
+            }
+
+            if let nestedArrayModel = model.nestedArray?.first {
+                XCTAssertEqual(nestedArrayModel.context, "nestedArrayContext")
+            } else {
+                XCTFail("Failed to unbox nested model array")
+            }
+
+        } catch {
+            XCTFail()
+        }
+    }
+
+    func testUnboxingObjectWithContextAtCustomKeyPath() {
+        let dictionary = [
+            "at_key": [
+                "nested_key": [
+                    "nested" : [:],
+                    "nestedArray": [[:]]
+                ]
+            ]
+        ]
+
+        do {
+            let model: UnboxTestContextMock = try unbox(dictionary: dictionary, atKeyPath: "at_key.nested_key", context: "this context")
+            XCTAssertEqual(model.context, "this context")
+
+            if let nestedModel = model.nested {
+                XCTAssertEqual(nestedModel.context, "nestedContext")
+            } else {
+                XCTFail("Failed to unbox nested model")
+            }
+
+            if let nestedArrayModel = model.nestedArray?.first {
+                XCTAssertEqual(nestedArrayModel.context, "nestedArrayContext")
+            } else {
+                XCTFail("Failed to unbox nested model array")
+            }
+
+        } catch {
+            XCTFail()
+        }
+    }
+
 }
 
 private func UnboxTestDictionaryWithAllRequiredKeysWithValidValues(nested: Bool) -> UnboxableDictionary {
